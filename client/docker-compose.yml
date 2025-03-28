@@ -1,0 +1,27 @@
+services:
+  vite-react-app:
+    build: .
+    container_name: vite-react-app
+    ports:
+      - "8080:8080"  # Only expose this port for local development, not for production.
+    env_file:
+      - .env
+    command: npm run preview -- --host
+    networks:
+      - frontend
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-proxy
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - vite-react-app
+    networks:
+      - frontend
+
+networks:
+  frontend:
+    driver: bridge
